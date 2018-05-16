@@ -1,0 +1,6 @@
+run
+-p xc3s250e-5-cp132
+-top comp
+-ifn comp.prj
+-ofn comp.ngc
+
