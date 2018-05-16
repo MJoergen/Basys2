@@ -11,18 +11,24 @@ all: comp.bit
 # The first prerequisite must be comp.scr, because the tag $< refers to this.
 comp.ngc: comp.scr comp.vhd comp.prj
 	$(ENV); xst -ifn $<
+# The 'junk' variable is just a list of the generated output files.
+junk += comp.lso comp.ngc comp.ngc_xst.xrpt comp.srp xst
 
 comp.ngd: comp.ngc comp.ucf
 	$(ENV); ngdbuild $<
+junk += comp.bld comp.ngd comp_ngdbuild.xrpt netlist.lst xlnx_auto_0_xdb/
 
 comp.ncd: comp.ngd
 	$(ENV); map $<
+junk += _xmsgs comp.map comp.mrp	comp.ncd comp.ngm comp.pcf comp_map.xrpt comp_usage.xml
 
 comp_par.ncd: comp.ncd
 	$(ENV); par -w $< $@
+junk += comp_par.ncd comp_par.pad comp_par_pad.csv comp_par_pad.txt comp_par.par comp_par.ptwx comp_par.unroutes comp_par.xpi comp_par.xrpt comp_summary.xml
 
 comp.bit: comp_par.ncd
 	$(ENV); bitgen -w $< $@
+junk += comp.bgn comp.bit comp_bitgen.xwbt comp.drc usage_statistics_webtalk.html webtalk.log
 
 clean:
-	rm -f -r comp.bgn comp.bit comp_bitgen.xwbt comp.bld comp.drc comp.lso comp.map comp_map.xrpt comp.mrp comp.ncd comp.ngc comp.ngc_xst.xrpt comp.ngd comp_ngdbuild.xrpt comp.ngm comp_par.ncd comp_par.pad comp_par_pad.csv comp_par_pad.txt comp_par.par comp_par.ptwx comp_par.unroutes comp_par.xpi comp_par.xrpt comp.pcf comp.srp comp_summary.xml comp_usage.xml netlist.lst usage_statistics_webtalk.html webtalk.log xlnx_auto_0_xdb _xmsgs xst 
+	rm -f -r $(junk)
