@@ -1,10 +1,18 @@
 XILINX_DIR = /opt/Xilinx/14.7/ISE_DS
 ENV = . $(XILINX_DIR)/settings64.sh
 
-comp.ngc: comp.scr comp.vhd
-	$(ENV); xst -ifn comp.scr
+# The first target in the Makefile is default.
+# It is a convention to use the target 'all'.
+# The .PHONY tag instructs the make-command
+# to not look for a file named 'all'.
+.PHONY: all
+all: comp.bit
 
-comp.ngd: comp.ngc
+# The first prerequisite must be comp.scr, because the tag $< refers to this.
+comp.ngc: comp.scr comp.vhd comp.prj
+	$(ENV); xst -ifn $<
+
+comp.ngd: comp.ngc comp.ucf
 	$(ENV); ngdbuild $<
 
 comp.ncd: comp.ngd
